@@ -66,8 +66,16 @@ uint8_t uart_byte[]={0};
 uint8_t uart_buff[6];
 uint8_t num_byte=0;
 
+//uint8_t sendData[]="MSOK33\n";
+char sendData[11]={0};
+uint8_t OK[2]="OK";
+uint8_t LE[2]="LE";
+uint8_t sendData2[]="OK";
+uint8_t sendTEMP[]="  \n\r";
+char sendBAT[4];
+uint8_t power=0;
 
-
+uint8_t buff_transmit=0;
 uint8_t buf_vape[5];
 uint8_t buf_healt_left[5];
 uint8_t buf_healt_right[5];
@@ -76,7 +84,8 @@ uint8_t buf_coller_right[5];
 uint8_t buf_water_left[5];
 uint8_t buf_water_right[5];
 uint8_t buf_vibro[5];
-
+int8_t fan_smell=0;
+volatile  uint16_t tempvibro=0;
 
 
 bool healt_right=false;
@@ -97,6 +106,10 @@ bool vape8=false;
 bool vape9=false;
 
 
+float BAT=0;
+uint8_t b=0;
+
+
 uint32_t time_healt_right=0;
 uint32_t time_healt_left=0;
 uint32_t time_cooler_right=0;
@@ -113,8 +126,9 @@ uint32_t time_vape6=0;
 uint32_t time_vape7=0;
 uint32_t time_vape8=0;
 uint32_t time_vape9=0;
-
-
+uint32_t time_sendData=0;
+uint32_t time_sendData2=0;
+uint32_t time_sendData3=0;
 
 
 uint32_t time_haelt_rightOff=0;
@@ -133,6 +147,7 @@ uint32_t time_vape6_Off=0;
 uint32_t time_vape7_Off=0;
 uint32_t time_vape8_Off=0;
 uint32_t time_vape9_Off=0;
+
 
 
 
@@ -227,14 +242,14 @@ int main(void)
 
 //--------------Вкл---------
 
-//	while(PowerOn())
-//	{
-//		if(powercount<=0)
-//		{	Power_off2();}
-//		//if(powercount>=60)
-//		//{break;}
-//	}
-//	
+	while(PowerOn())
+	{
+		if(powercount<=0)
+		{	Power_off2();}
+		//if(powercount>=60)
+		//{break;}
+	}
+	
 	
 //---------------------------	
 	
@@ -244,7 +259,7 @@ int main(void)
 	HAL_ADC_Start_DMA(&hadc1,adc_buffer,2); // Старт ADC, напряжение и температура 
 	
 	//-----Стартуем все таймеры на частотах TIM1,TIM2,TIM3 - 45 кГц TIM4 - 110 кГц ----
-				HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+				HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); 
         HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
         HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
         HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
@@ -267,6 +282,9 @@ int main(void)
 		//	TIM3->CCR4=1000;
 		 BT_PowerOn();
 		 powercount=0;
+		 
+		 
+		 //	HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -277,30 +295,97 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 		
+		
+		
+		
+		Power_OFF();
+		
 		tick_time=HAL_GetTick();
 		
+				//	sendBAT=(uint8_t*)b;		
+		BAT= ((adc_value[0]*3.33)/4096)/(100000.0/(100000.0+33000.0))*10;	
+	  b=BAT;	
+		//sendBAT=(uint8_t*)b;	
+	 // sprintf(sendData,"MS%s:%f\r\n",OK,BAT);				
+		//sendBAT[1]=BAT; 
+		
+		
+		
+		
+		
+		
+//		
+//		if(tick_time-time_sendData>5000)
+//			{
+//			time_sendData=HAL_GetTick();
+//			//HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);
+//		 // HAL_UART_Transmit_DMA(&huart2, (uint8_t*)sendBAT, 4);
+//			}
+//			
+			
+			
+			
+			
+			
+//			if(tick_time-time_sendData2>5100)
+//			{
+//			time_sendData2=HAL_GetTick();
+//			HAL_UART_Transmit_DMA(&huart2, sendData2, sizeof(sendData)-1);
+//		 // HAL_UART_Transmit_DMA(&huart2, (uint8_t*)sendBAT, 4);
+//			}
+//			if(tick_time-time_sendData3>5200)
+//			{
+//			time_sendData3=HAL_GetTick();
+//		//	HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);
+//		  HAL_UART_Transmit_DMA(&huart2, (uint8_t*)sendBAT, 4);
+//			}
+			
+			
+			
+			
+			
 		//----------------Прием данных по UART --------------------------------------------
 				HAL_UART_Receive_DMA(&huart2, uart_byte,1);
 		
 		
 				if (uart_byte[0]!=0)
 					{
-						if(uart_byte[0]==0x0A){num_byte=0;}else
+						if(uart_byte[0]==0x0A)num_byte=0;else
 						{
 								uart_buff[num_byte]=uart_byte[0];
 								num_byte++;
 								uart_byte[0]=0;
+							
 								if(num_byte>=5)num_byte=0;
 							
 						}
 					}
 		//-----------------------------------------------------------------------------------			
-
-					
+		//if(uart_buff[0]==0x3F){buff_transmit[0]=uart_buff[0];uart_buff[0]=0;}
+//		if(uart_buff[0]==0x3F){buff_transmit=0x3F;uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;uart_buff[5]=0;uart_buff[1]=0;}
+//		if(buff_transmit==0x3F)
+//		{HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);buff_transmit=0;uart_buff[0]=0;}			
+		
+			
+			
 					
 		//------------------Разбор данных с буфера ------------------------------------------
 		if(uart_buff[0]!=0&&uart_buff[1]!=0&&uart_buff[2]!=0&&uart_buff[3]!=0&&uart_buff[4]!=0)
 			{
+		
+		if(uart_buff[0]==0x3F){buff_transmit=0x3F;uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;uart_buff[5]=0;uart_buff[1]=0;}
+		if(buff_transmit==0x3F)
+		{
+			if(b>34)
+				sprintf(sendData,"MSOK%d%d\n\r",b,Read_Temp());
+			else
+				sprintf(sendData,"MSLE%d\n\r",b);
+			HAL_UART_Transmit_DMA(&huart2, (uint8_t*)sendData, sizeof(sendData)-1);
+			buff_transmit=0;
+			uart_buff[0]=0;
+		}		
+				
+				
 		if(uart_buff[0]==0x38){buf_vape[0]=uart_buff[0];buf_vape[1]=uart_buff[1];buf_vape[2]=uart_buff[2];buf_vape[3]=uart_buff[3];buf_vape[4]=uart_buff[4];uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}
 		if(uart_buff[0]==0x33){buf_healt_left[0]=uart_buff[0];buf_healt_left[1]=uart_buff[1];buf_healt_left[2]=uart_buff[2];buf_healt_left[3]=uart_buff[3];buf_healt_left[4]=uart_buff[4];uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}
 		if(uart_buff[0]==0x34){buf_healt_right[0]=uart_buff[0];buf_healt_right[1]=uart_buff[1];buf_healt_right[2]=uart_buff[2];buf_healt_right[3]=uart_buff[3];buf_healt_right[4]=uart_buff[4];uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}
@@ -309,7 +394,7 @@ int main(void)
 		if(uart_buff[0]==0x36){buf_water_left[0]=uart_buff[0];buf_water_left[1]=uart_buff[1];buf_water_left[2]=uart_buff[2];buf_water_left[3]=uart_buff[3];buf_water_left[4]=uart_buff[4];uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}
 		if(uart_buff[0]==0x37){buf_water_right[0]=uart_buff[0];buf_water_right[1]=uart_buff[1];buf_water_right[2]=uart_buff[2];buf_water_right[3]=uart_buff[3];buf_water_right[4]=uart_buff[4];uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}
 		if(uart_buff[0]==0x35){buf_vibro[0]=uart_buff[0];buf_vibro[1]=uart_buff[1];buf_vibro[2]=uart_buff[2];buf_vibro[3]=uart_buff[3];buf_vibro[4]=uart_buff[4];uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}
-		else {uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}				
+		else{uart_buff[0]=0;uart_buff[1]=0;uart_buff[2]=0;uart_buff[3]=0;uart_buff[4]=0;}				
 			}
 			
 		
@@ -320,204 +405,252 @@ int main(void)
 				if(buf_healt_right[0]==0x34)
 						{
 							healt_right=true;
-							TIM4->CCR4=1500;
-							TIM3->CCR3=1500;
+							TIM4->CCR4=(654*(buf_healt_right[2]-0x30)/10);
+							TIM3->CCR3=(1600*(buf_healt_right[2]-0x30)/10);
+							buf_healt_right[2]=0;
 							time_healt_right=HAL_GetTick();
 							buf_healt_right[0]=0;
 							time_haelt_rightOff=(buf_healt_right[3]-0x30)*10 + (buf_healt_right[4]-0x30);
-							buf_healt_right[3]=0;buf_healt_right[4]=0;
+							buf_healt_right[3]=0;buf_healt_right[4]=0;buf_healt_right[1]=0;
 						}	
 					
 						if(buf_healt_left[0]==0x33)
 						{
 							healt_left=true;
-							TIM3->CCR2=1500;
-							TIM4->CCR3=1500;
+							TIM3->CCR2=(1600*(buf_healt_left[2]-0x30)/10);
+							TIM4->CCR3=(654*(buf_healt_left[2]-0x30)/10);
+							buf_healt_left[2]=0;
 							time_healt_left=HAL_GetTick();
 							buf_healt_left[0]=0;
 							time_haelt_leftOff=(buf_healt_left[3]-0x30)*10 + (buf_healt_left[4]-0x30);
-							buf_healt_left[3]=0;buf_healt_left[4]=0;
+							buf_healt_left[3]=0;buf_healt_left[4]=0;buf_healt_left[1]=0;
 						}	
 						
 				
 				if(buf_coller_right[0]==0x32)
 						{
 							cooler_right=true;
-							TIM3->CCR3=1500;
-							
+							TIM3->CCR3=(1600*(buf_coller_right[2]-0x30)/9);
+							buf_coller_right[2]=0;
 							time_cooler_right=HAL_GetTick();
 							buf_coller_right[0]=0;
 							time_cooler_rightOff=(buf_coller_right[3]-0x30)*10 + (buf_coller_right[4]-0x30);
-							buf_coller_right[3]=0;buf_coller_right[4]=0;
+							buf_coller_right[3]=0;buf_coller_right[4]=0;buf_coller_right[1]=0;
 						}	
 				
 						
 				if(buf_coller_left[0]==0x31)
 						{
 							cooler_left=true;
-							TIM3->CCR2=1500;
-							
+							TIM3->CCR2=(1600*(buf_coller_left[2]-0x30)/9);
+							buf_coller_left[2]=0;
 							time_cooler_left=HAL_GetTick();
 							buf_coller_left[0]=0;
 							time_cooler_leftOff=(buf_coller_left[3]-0x30)*10 + (buf_coller_left[4]-0x30);
-							buf_coller_left[3]=0;buf_coller_left[4]=0;
+							buf_coller_left[3]=0;buf_coller_left[4]=0;buf_coller_left[1]=0;
 						}	
 						
 						
 				if(buf_water_right[0]==0x37)
 						{
 							water_right=true;
-							TIM4->CCR2=150;
-							
+						//	TIM4->CCR2=327;
+						TIM4->CCR2=((328*(buf_water_right[2]-0x30))/9);
 							time_water_right=HAL_GetTick();
 							buf_water_right[0]=0;
 							time_water_rightOff=(buf_water_right[3]-0x30)*10 + (buf_water_right[4]-0x30);
-							buf_water_right[3]=0;buf_water_right[4]=0;
+							buf_water_right[3]=0;buf_water_right[4]=0;buf_water_right[1]=0;buf_water_right[2]=0;
 						}	
 						
 						
 				if(buf_water_left[0]==0x36)
 						{
 							water_left=true;
-							TIM4->CCR1=150;
-							
+						  //TIM4->CCR1=327;
+							TIM4->CCR1=((328*(buf_water_left[2]-0x30))/9);
 							time_water_left=HAL_GetTick();
 							buf_water_left[0]=0;
 							time_water_leftOff=(buf_water_left[3]-0x30)*10 + (buf_water_left[4]-0x30);
-							buf_water_left[3]=0;buf_water_left[4]=0;
+							buf_water_left[3]=0;buf_water_left[4]=0;buf_water_left[1]=0;buf_water_left[2]=0;
 						}	
 						
 						
 				if(buf_vibro[0]==0x35)
 						{
 							vibro=true;
-							TIM3->CCR4=800;
-							
+							tempvibro=((1000+(buf_vibro[2]-0x30)*90));
+							TIM3->CCR4=tempvibro;
+						  buf_vibro[2]=0;
 							time_vibro=HAL_GetTick();
 							buf_vibro[0]=0;
 							time_vibro_Off=(buf_vibro[3]-0x30)*10 + (buf_vibro[4]-0x30);
-							buf_vibro[3]=0;buf_vibro[4]=0;
+							buf_vibro[3]=0;buf_vibro[4]=0;buf_vibro[1]=0;
 						}	
 						
 			
 
-
+	if(buf_vape[0]==0x38)
+	{
 								
-				if(buf_vape[0]==0x38)
+				if(buf_vape[1]==0x31)
 						{
 							vape1=true;
-							TIM2->CCR2=800;
-							
+							TIM2->CCR2=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape1=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape1_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}	
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x32)
 						{
 							vape2=true;
-							TIM2->CCR2=800;
-							
+							TIM2->CCR1=(800*(buf_vape[2]-0x30)/10);;
+							fan_smell++;
 							time_vape2=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape2_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x33)
 						{
 							vape3=true;
-							TIM2->CCR2=800;
-							
+							TIM1->CCR4=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape3=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape3_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x34)
 						{
 							vape4=true;
-							TIM2->CCR2=800;
-							
+							TIM1->CCR3=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape4=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape4_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x35)
 						{
 							vape5=true;
-							TIM2->CCR2=800;
-							
+							TIM1->CCR2=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape5=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape5_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x36)
 						{
 							vape6=true;
-							TIM2->CCR2=800;
-							
+							TIM1->CCR1=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape6=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape6_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x37)
 						{
 							vape7=true;
-							TIM2->CCR2=800;
-							
+							TIM2->CCR4=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape7=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape7_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x38)
 						{
 							vape8=true;
-							TIM2->CCR2=800;
-							
-							time_vape1=HAL_GetTick();
+							TIM2->CCR3=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
+							time_vape8=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape8_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
-						if(buf_vape[0]==0x38)
+						if(buf_vape[1]==0x39)
 						{
 							vape9=true;
-							TIM2->CCR2=800;
-							
+							TIM3->CCR1=(800*(buf_vape[2]-0x30)/10);
+							buf_vape[2]=0;
+							fan_smell++;
 							time_vape9=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape9_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
-							buf_vape[3]=0;buf_vape[4]=0;
+							buf_vape[3]=0;buf_vape[4]=0;buf_vape[1]=0;
 						}
 						
+	}			
 				
 			
 			
 			if(healt_right==true&&tick_time-time_healt_right>(time_haelt_rightOff * 100)){TIM4->CCR4=0;healt_right=true; time_healt_right=HAL_GetTick(); if (cooler_right==true)healt_right=true;else {TIM3->CCR3=0;healt_right=false;} }
 			if(healt_left==true&&tick_time-time_healt_left>(time_haelt_leftOff * 100)){TIM4->CCR3=0;  healt_left=true; time_healt_left=HAL_GetTick();if (cooler_left==true)healt_left=true;else {TIM3->CCR2=0;healt_left=false;}} 
 			if(cooler_left==true&&tick_time-time_cooler_left>(time_cooler_leftOff * 100)){TIM3->CCR2=0;TIM4->CCR3=0;  cooler_left=false; time_cooler_left=HAL_GetTick();}
-			if(cooler_right==true&&tick_time-time_cooler_right>(time_cooler_rightOff * 100)){TIM3->CCR3=0;TIM4->CCR4=0;  cooler_right=false; time_cooler_left=HAL_GetTick();}
+			if(cooler_right==true&&tick_time-time_cooler_right>(time_cooler_rightOff * 100)){TIM3->CCR3=0;TIM4->CCR4=0;  cooler_right=false; time_cooler_right=HAL_GetTick();}
 			if(water_right==true&&tick_time-time_water_right>(time_water_rightOff * 100)){TIM4->CCR2=0;  water_right=false; time_water_right=HAL_GetTick();}
 			if(water_left==true&&tick_time-time_water_left>(time_water_leftOff * 100)){TIM4->CCR1=0;  water_left=false; time_water_left=HAL_GetTick();}
-			if(vibro==true&&tick_time-time_vibro>(time_vibro_Off * 100)){TIM3->CCR4=0;  vibro=false; time_vibro=HAL_GetTick();}
+			if(vibro==true&&tick_time-time_vibro>(time_vibro_Off * 100)){TIM3->CCR4=0;  vibro=false; time_vibro=HAL_GetTick();tempvibro=0;buf_vibro[2]=0;}
 			
 			
 			
-
+			if(vape1==true&&tick_time-time_vape1>(time_vape1_Off * 100)){TIM2->CCR2=0; vape1=false; time_vape1=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape2==true&&tick_time-time_vape2>(time_vape2_Off * 100)){TIM2->CCR1=0; vape2=false; time_vape2=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape3==true&&tick_time-time_vape3>(time_vape3_Off * 100)){TIM1->CCR4=0; vape3=false; time_vape3=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape4==true&&tick_time-time_vape4>(time_vape4_Off * 100)){TIM1->CCR3=0; vape4=false; time_vape4=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape5==true&&tick_time-time_vape5>(time_vape5_Off * 100)){TIM1->CCR2=0; vape5=false; time_vape5=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape6==true&&tick_time-time_vape6>(time_vape6_Off * 100)){TIM1->CCR1=0; vape6=false; time_vape6=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape7==true&&tick_time-time_vape7>(time_vape7_Off * 100)){TIM2->CCR4=0; vape7=false; time_vape7=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape8==true&&tick_time-time_vape8>(time_vape8_Off * 100)){TIM2->CCR3=0; vape8=false; time_vape8=HAL_GetTick();fan_smell=fan_smell-1;}
+			if(vape9==true&&tick_time-time_vape9>(time_vape9_Off * 100)){TIM3->CCR1=0; vape9=false; time_vape9=HAL_GetTick();fan_smell=fan_smell-1;}
+			
+//			if(fan_smell>0) 
+//			{
+//				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_SET);
+//			}
+//				else
+//			{
+//				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_RESET);
+//			}
+			
+			if (vape1==true||vape2==true||vape3==true||vape4==true||vape5==true||vape6==true||vape7==true||vape8==true||vape9==true)
+			{
+				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_SET);
+			}
+				else
+			{
+				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_RESET);
+			}
 					
+			
+			
+			Blink_Led_Blue();
+			
+		//	HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);
+		//	HAL_Delay(100);
+			
+			
+			
 // 		
 //		temp2[0] = uart_buff[0];
 //		temp2[1] = uart_buff[1];
@@ -549,7 +682,7 @@ void SystemClock_Config(void)
     */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV2;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
@@ -856,7 +989,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 0;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 655;
+  htim4.Init.Period = 654;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -974,10 +1107,19 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BLUETOOTH_UP_GPIO_Port, BLUETOOTH_UP_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(Fan_smell_GPIO_Port, Fan_smell_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pins : LED_STATUS_Pin LED_STATUS_2_Pin */
   GPIO_InitStruct.Pin = LED_STATUS_Pin|LED_STATUS_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : POWER_KEY_Pin */
@@ -997,6 +1139,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(CHRG_STATUS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Fan_smell_Pin */
+  GPIO_InitStruct.Pin = Fan_smell_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(Fan_smell_GPIO_Port, &GPIO_InitStruct);
 
 }
 

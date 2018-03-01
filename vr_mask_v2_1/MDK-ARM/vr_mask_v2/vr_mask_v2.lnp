@@ -1,0 +1,26 @@
+--cpu Cortex-M3
+"vr_mask_v2\stm32f1xx_hal_cortex.o"
+"vr_mask_v2\stm32f1xx_hal_flash_ex.o"
+"vr_mask_v2\stm32f1xx_hal_tim_ex.o"
+"vr_mask_v2\stm32f1xx_hal_dma.o"
+"vr_mask_v2\stm32f1xx_hal_adc.o"
+"vr_mask_v2\stm32f1xx_hal_rcc_ex.o"
+"vr_mask_v2\stm32f1xx_hal_uart.o"
+"vr_mask_v2\stm32f1xx_hal_adc_ex.o"
+"vr_mask_v2\stm32f1xx_hal_rcc.o"
+"vr_mask_v2\stm32f1xx_hal_flash.o"
+"vr_mask_v2\stm32f1xx_hal.o"
+"vr_mask_v2\stm32f1xx_hal_gpio_ex.o"
+"vr_mask_v2\stm32f1xx_hal_gpio.o"
+"vr_mask_v2\stm32f1xx_hal_pwr.o"
+"vr_mask_v2\stm32f1xx_hal_tim.o"
+"vr_mask_v2\main.o"
+"vr_mask_v2\stm32f1xx_hal_msp.o"
+"vr_mask_v2\stm32f1xx_it.o"
+"vr_mask_v2\mask.o"
+"vr_mask_v2\startup_stm32f103xb.o"
+"vr_mask_v2\system_stm32f1xx.o"
+--library_type=microlib --strict --scatter "vr_mask_v2\vr_mask_v2.sct"
+--diag_suppress=L6329 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "vr_mask_v2.map" -o vr_mask_v2\vr_mask_v2.axf

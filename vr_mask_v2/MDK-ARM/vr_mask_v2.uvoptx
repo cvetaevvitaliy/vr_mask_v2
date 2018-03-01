@@ -176,77 +176,102 @@
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>volt</ItemText>
+          <ItemText>buf_vape</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>temperature</ItemText>
+          <ItemText>buf_healt_left</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>powercount,0x0A</ItemText>
+          <ItemText>buf_healt_right</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_vape</ItemText>
+          <ItemText>buf_coller_left</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_healt_left</ItemText>
+          <ItemText>buf_coller_right</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_healt_right</ItemText>
+          <ItemText>buf_water_left</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_coller_left</ItemText>
+          <ItemText>buf_water_right</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_coller_right</ItemText>
+          <ItemText>buf_vibro</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_water_left</ItemText>
+          <ItemText>tick_time,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_water_right</ItemText>
+          <ItemText>time_haelt_leftOff,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>15</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf_vibro</ItemText>
+          <ItemText>time_haelt_rightOff,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>16</count>
           <WinNumber>1</WinNumber>
-          <ItemText>tick_time,0x0A</ItemText>
+          <ItemText>time_haelt_leftOff,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>17</count>
           <WinNumber>1</WinNumber>
-          <ItemText>time_haelt_leftOff,0x0A</ItemText>
+          <ItemText>fan_smell,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>18</count>
           <WinNumber>1</WinNumber>
-          <ItemText>time_haelt_rightOff,0x0A</ItemText>
+          <ItemText>BAT,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>19</count>
           <WinNumber>1</WinNumber>
-          <ItemText>time_haelt_leftOff,0x0A</ItemText>
+          <ItemText>sendBAT,0x10</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>b,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>buff_transmit</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>uart_buff[0]</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tempvibro,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>buf_vibro[2],0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
