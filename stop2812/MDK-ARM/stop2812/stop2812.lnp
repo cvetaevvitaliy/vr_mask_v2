@@ -1,0 +1,25 @@
+--cpu Cortex-M3
+"stop2812\startup_stm32f103xb.o"
+"stop2812\system_stm32f1xx.o"
+"stop2812\stm32f1xx_hal_msp.o"
+"stop2812\stm32f1xx_it.o"
+"stop2812\main.o"
+"stop2812\ws28xx.o"
+"stop2812\stm32f1xx_hal_spi.o"
+"stop2812\stm32f1xx_hal_cortex.o"
+"stop2812\stm32f1xx_hal_pwr.o"
+"stop2812\stm32f1xx_hal_rcc.o"
+"stop2812\stm32f1xx_hal.o"
+"stop2812\stm32f1xx_hal_spi_ex.o"
+"stop2812\stm32f1xx_hal_dma.o"
+"stop2812\stm32f1xx_hal_tim.o"
+"stop2812\stm32f1xx_hal_tim_ex.o"
+"stop2812\stm32f1xx_hal_gpio.o"
+"stop2812\stm32f1xx_hal_rcc_ex.o"
+"stop2812\stm32f1xx_hal_flash.o"
+"stop2812\stm32f1xx_hal_flash_ex.o"
+"stop2812\stm32f1xx_hal_gpio_ex.o"
+--library_type=microlib --strict --scatter "stop2812\stop2812.sct"
+--diag_suppress=L6329 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "stop2812.map" -o stop2812\stop2812.axf
