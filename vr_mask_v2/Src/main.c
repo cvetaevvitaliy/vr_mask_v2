@@ -62,6 +62,10 @@ DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+
+#define PowerOdor 315
+
+
 uint8_t uart_byte[]={0};
 uint8_t uart_buff[6];
 uint8_t num_byte=0;
@@ -282,8 +286,8 @@ int main(void)
 		//	TIM3->CCR4=1000;
 		 BT_PowerOn();
 		 powercount=0;
-		 
-		 
+		 HAL_Delay(500);
+		 HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_RESET);
 		 //	HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);
   /* USER CODE END 2 */
 
@@ -406,7 +410,7 @@ int main(void)
 						{
 							healt_right=true;
 							TIM4->CCR4=(654*(buf_healt_right[2]-0x30)/10);
-							TIM3->CCR3=(1600*(buf_healt_right[2]-0x30)/10);
+							TIM3->CCR3=(700*(buf_healt_right[2]-0x30)/10);
 							buf_healt_right[2]=0;
 							time_healt_right=HAL_GetTick();
 							buf_healt_right[0]=0;
@@ -417,7 +421,7 @@ int main(void)
 						if(buf_healt_left[0]==0x33)
 						{
 							healt_left=true;
-							TIM3->CCR2=(1600*(buf_healt_left[2]-0x30)/10);
+							TIM3->CCR2=(700*(buf_healt_left[2]-0x30)/10);
 							TIM4->CCR3=(654*(buf_healt_left[2]-0x30)/10);
 							buf_healt_left[2]=0;
 							time_healt_left=HAL_GetTick();
@@ -495,7 +499,7 @@ int main(void)
 				if(buf_vape[1]==0x31)
 						{
 							vape1=true;
-							TIM2->CCR2=(800*(buf_vape[2]-0x30)/10);
+							TIM2->CCR2=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape1=HAL_GetTick();
@@ -507,7 +511,7 @@ int main(void)
 						if(buf_vape[1]==0x32)
 						{
 							vape2=true;
-							TIM2->CCR1=(800*(buf_vape[2]-0x30)/10);;
+							TIM2->CCR1=(PowerOdor*(buf_vape[2]-0x30)/10);;
 							fan_smell++;
 							time_vape2=HAL_GetTick();
 							buf_vape[0]=0;
@@ -519,7 +523,7 @@ int main(void)
 						if(buf_vape[1]==0x33)
 						{
 							vape3=true;
-							TIM1->CCR4=(800*(buf_vape[2]-0x30)/10);
+							TIM1->CCR4=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape3=HAL_GetTick();
@@ -531,7 +535,7 @@ int main(void)
 						if(buf_vape[1]==0x34)
 						{
 							vape4=true;
-							TIM1->CCR3=(800*(buf_vape[2]-0x30)/10);
+							TIM1->CCR3=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape4=HAL_GetTick();
@@ -543,7 +547,7 @@ int main(void)
 						if(buf_vape[1]==0x35)
 						{
 							vape5=true;
-							TIM1->CCR2=(800*(buf_vape[2]-0x30)/10);
+							TIM1->CCR2=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape5=HAL_GetTick();
@@ -555,7 +559,7 @@ int main(void)
 						if(buf_vape[1]==0x36)
 						{
 							vape6=true;
-							TIM1->CCR1=(800*(buf_vape[2]-0x30)/10);
+							TIM1->CCR1=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape6=HAL_GetTick();
@@ -567,7 +571,7 @@ int main(void)
 						if(buf_vape[1]==0x37)
 						{
 							vape7=true;
-							TIM2->CCR4=(800*(buf_vape[2]-0x30)/10);
+							TIM2->CCR4=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape7=HAL_GetTick();
@@ -579,7 +583,7 @@ int main(void)
 						if(buf_vape[1]==0x38)
 						{
 							vape8=true;
-							TIM2->CCR3=(800*(buf_vape[2]-0x30)/10);
+							TIM2->CCR3=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape8=HAL_GetTick();
@@ -591,7 +595,7 @@ int main(void)
 						if(buf_vape[1]==0x39)
 						{
 							vape9=true;
-							TIM3->CCR1=(800*(buf_vape[2]-0x30)/10);
+							TIM3->CCR1=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
 							fan_smell++;
 							time_vape9=HAL_GetTick();
@@ -643,9 +647,16 @@ int main(void)
 			}
 					
 			
-			
+			if(b<37)
+			{
+		//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_RESET);
+			Blink_led_Red();
+			}
+			else
+			{
+		//	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
 			Blink_Led_Blue();
-			
+			}
 		//	HAL_UART_Transmit_DMA(&huart2, sendData, sizeof(sendData)-1);
 		//	HAL_Delay(100);
 			

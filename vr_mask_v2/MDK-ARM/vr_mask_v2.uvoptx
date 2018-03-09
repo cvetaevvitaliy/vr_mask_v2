@@ -273,6 +273,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>buf_vibro[2],0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>((TIM_TypeDef *)(0x40000000U + 0x00000000U))-&gt;CCR3,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>

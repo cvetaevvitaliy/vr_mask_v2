@@ -7,7 +7,7 @@ float volt=0;
 float temperature=0;
 extern uint8_t powercount;
 uint8_t temP;
-
+extern uint8_t b;
 
 
 #define VOLTAGE_DIVIDER_R1 33000.0
@@ -44,10 +44,11 @@ uint8_t PowerOn()
 		powercount++;
 		HAL_Delay(50);
 		
-		if (powercount>=125)
+		if (powercount>=65)
 		{
 			
 			HAL_Delay(600);
+			//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_SET);
 			return 0;
 		}
 		
@@ -81,15 +82,15 @@ void Power_off2()
 void Blink_Led_Blue()
 {
 	
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
+	
 	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_15))
-			{
-				//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_SET);
-			}
+	{
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_SET);
+	}
 			
 	else 
 	{
-		//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_RESET);
 	}
 
@@ -98,10 +99,23 @@ void Blink_Led_Blue()
 
 void Blink_led_Red()
 {
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_14,GPIO_PIN_RESET);
 
-
+	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_15))
+	{
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
+	}
+			
+	else 
+	{
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
+	}
 
 }
+
+
+
+
 
 void Power_OFF()
 {
@@ -110,7 +124,7 @@ void Power_OFF()
 		powercount++;
 		HAL_Delay(50);
 		
-		if (powercount>=125)
+		if (powercount>=85)
 		{
 			Power_off2();
 			
