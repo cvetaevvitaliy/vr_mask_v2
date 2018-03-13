@@ -410,7 +410,8 @@ int main(void)
 						{
 							healt_right=true;
 							TIM4->CCR4=(654*(buf_healt_right[2]-0x30)/10);
-							TIM3->CCR3=(700*(buf_healt_right[2]-0x30)/10);
+//							TIM3->CCR3=(250*(buf_healt_right[2]-0x30)/10);
+							TIM3->CCR3=40;
 							buf_healt_right[2]=0;
 							time_healt_right=HAL_GetTick();
 							buf_healt_right[0]=0;
@@ -421,7 +422,8 @@ int main(void)
 						if(buf_healt_left[0]==0x33)
 						{
 							healt_left=true;
-							TIM3->CCR2=(700*(buf_healt_left[2]-0x30)/10);
+//							TIM3->CCR2=(250*(buf_healt_left[2]-0x30)/10);
+							TIM3->CCR2=40;
 							TIM4->CCR3=(654*(buf_healt_left[2]-0x30)/10);
 							buf_healt_left[2]=0;
 							time_healt_left=HAL_GetTick();
@@ -459,7 +461,7 @@ int main(void)
 						{
 							water_right=true;
 						//	TIM4->CCR2=327;
-						TIM4->CCR2=((328*(buf_water_right[2]-0x30))/9);
+						TIM4->CCR2=((322*(buf_water_right[2]-0x30))/10);
 							time_water_right=HAL_GetTick();
 							buf_water_right[0]=0;
 							time_water_rightOff=(buf_water_right[3]-0x30)*10 + (buf_water_right[4]-0x30);
@@ -471,7 +473,7 @@ int main(void)
 						{
 							water_left=true;
 						  //TIM4->CCR1=327;
-							TIM4->CCR1=((328*(buf_water_left[2]-0x30))/9);
+							TIM4->CCR1=((322*(buf_water_left[2]-0x30))/10);
 							time_water_left=HAL_GetTick();
 							buf_water_left[0]=0;
 							time_water_leftOff=(buf_water_left[3]-0x30)*10 + (buf_water_left[4]-0x30);
@@ -498,10 +500,12 @@ int main(void)
 								
 				if(buf_vape[1]==0x31)
 						{
+							if(vape1!=true)
+									fan_smell++;
 							vape1=true;
 							TIM2->CCR2=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+						//	fan_smell++;
 							time_vape1=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape1_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -510,9 +514,11 @@ int main(void)
 						
 						if(buf_vape[1]==0x32)
 						{
+							if(vape2!=true)
+									fan_smell++;
 							vape2=true;
 							TIM2->CCR1=(PowerOdor*(buf_vape[2]-0x30)/10);;
-							fan_smell++;
+						//	fan_smell++;
 							time_vape2=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape2_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -522,10 +528,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x33)
 						{
+							if(vape3!=true)
+									fan_smell++;
 							vape3=true;
 							TIM1->CCR4=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+						//	fan_smell++;
 							time_vape3=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape3_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -534,10 +542,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x34)
 						{
+							if(vape4!=true)
+									fan_smell++;
 							vape4=true;
 							TIM1->CCR3=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+							//fan_smell++;
 							time_vape4=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape4_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -546,10 +556,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x35)
 						{
+							if(vape5!=true)
+									fan_smell++;
 							vape5=true;
 							TIM1->CCR2=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+						//	fan_smell++;
 							time_vape5=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape5_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -558,10 +570,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x36)
 						{
+							if(vape6!=true)
+									fan_smell++;
 							vape6=true;
 							TIM1->CCR1=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+							//fan_smell++;
 							time_vape6=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape6_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -570,10 +584,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x37)
 						{
+							if(vape7!=true)
+									fan_smell++;
 							vape7=true;
 							TIM2->CCR4=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+							//fan_smell++;
 							time_vape7=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape7_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -582,10 +598,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x38)
 						{
+							if(vape8!=true)
+									fan_smell++;
 							vape8=true;
 							TIM2->CCR3=(PowerOdor*(buf_vape[2]-0x30)/10);
 							buf_vape[2]=0;
-							fan_smell++;
+							//fan_smell++;
 							time_vape8=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape8_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -594,10 +612,12 @@ int main(void)
 						
 						if(buf_vape[1]==0x39)
 						{
+							if(vape9!=true)
+									fan_smell++;
 							vape9=true;
 							TIM3->CCR1=(PowerOdor*(buf_vape[2]-0x30)/10);
-							buf_vape[2]=0;
-							fan_smell++;
+							buf_vape[2]=0;							
+						//	fan_smell++;
 							time_vape9=HAL_GetTick();
 							buf_vape[0]=0;
 							time_vape9_Off=(buf_vape[3]-0x30)*10 + (buf_vape[4]-0x30);
@@ -627,17 +647,8 @@ int main(void)
 			if(vape7==true&&tick_time-time_vape7>(time_vape7_Off * 100)){TIM2->CCR4=0; vape7=false; time_vape7=HAL_GetTick();fan_smell=fan_smell-1;}
 			if(vape8==true&&tick_time-time_vape8>(time_vape8_Off * 100)){TIM2->CCR3=0; vape8=false; time_vape8=HAL_GetTick();fan_smell=fan_smell-1;}
 			if(vape9==true&&tick_time-time_vape9>(time_vape9_Off * 100)){TIM3->CCR1=0; vape9=false; time_vape9=HAL_GetTick();fan_smell=fan_smell-1;}
-			
-//			if(fan_smell>0) 
-//			{
-//				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_SET);
-//			}
-//				else
-//			{
-//				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_RESET);
-//			}
-			
-			if (vape1==true||vape2==true||vape3==true||vape4==true||vape5==true||vape6==true||vape7==true||vape8==true||vape9==true)
+		
+			if(fan_smell>0) 
 			{
 				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_SET);
 			}
@@ -645,7 +656,16 @@ int main(void)
 			{
 				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_RESET);
 			}
-					
+			
+//			if (vape1==true||vape2==true||vape3==true||vape4==true||vape5==true||vape6==true||vape7==true||vape8==true||vape9==true)
+//			{
+//				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_SET);
+//			}
+//				else
+//			{
+//				HAL_GPIO_WritePin(GPIOB,GPIO_PIN_15,GPIO_PIN_RESET);
+//			}
+//					
 			
 			if(b<37)
 			{
